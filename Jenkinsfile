@@ -31,11 +31,11 @@ pipeline {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'dockerhub-creds',
-          usernameVariable: 'DOCKER_USER',
-          passwordVariable: 'DOCKER_PASS'
+          usernameVariable: 'smritigupta05',
+          passwordVariable: 'Ganesh@sopra12345'
         )]) {
           sh """
-            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+            echo "Ganesh@sopra12345" | docker login -u "smritigupta05" --password-stdin
             docker push ${IMAGE_NAME}:${BUILD_NUMBER}
             docker push ${IMAGE_NAME}:latest
           """
