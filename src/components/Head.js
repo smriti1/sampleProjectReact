@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleMenu } from "../utils/appSlice";
 import { SEARCH_API } from "../utils/constants";
@@ -14,6 +14,18 @@ export const Head = () => {
   const toggleMenuHandler = () => {
     dispatch(toggleMenu());
   };
+   const getSearchSuggestion = useCallback(async () => {
+  const data = await fetch(SEARCH_API + searchQuery);
+  const result = await data.json();
+
+  setSuggestions(result[1]);
+
+  dispatch(
+    cacheResults({
+      [searchQuery]: result[1],
+    })
+  );
+}, [searchQuery, dispatch]);
 
   useEffect(() => {
     /*Debouncing is used in search inputs to delay the API call until the user stops typing, 
@@ -21,30 +33,18 @@ export const Head = () => {
 in debouncing make an api call after every key press but if the difference between 2 api call is less than 200ms then decline the api call  
 */
     const timer = setTimeout(() => {
-      if (searchCache[searchQuery]) {
-        setShowSuggestion(searchCache[searchQuery]);
-      } else {
-        getSearchSuggestion();
-      }
-    }, 200); // debouncing
+    if (searchCache[searchQuery]) {
+      setSuggestions(searchCache[searchQuery]);
+    } else {
+      getSearchSuggestion();
+    }
+  }, 200);
 
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [searchQuery]);
+  return () => clearTimeout(timer);
+}, [searchQuery, searchCache, getSearchSuggestion]);
 
-  const getSearchSuggestion = async () => {
-    const data = await fetch(SEARCH_API + searchQuery);
-    const result = await data.json();
-    setSuggestions(result[1]);
-    console.log("Api call-", result[1])
 
-    // if not present in store then update store using dispatch
 
-    dispatch(cacheResults({
-      [searchQuery]:[result[1]]
-    }));
-  };
   return (
     <div className="grid grid-flow-col p-2 m-2 shadow-lg">
       <div className="flex col-span-1">
