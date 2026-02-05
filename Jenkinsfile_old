@@ -28,3 +28,4 @@ pipeline {
 
   }
 }
+// only CI code is present for CD deployment you have to add more code
