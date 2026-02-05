@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sampleprojectreact
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sampleprojectreact
+  template:
+    metadata:
+      labels:
+        app: sampleprojectreact
+    spec:
+      containers:
+        - name: sampleprojectreact
+          image: smritigupta05/sampleprojectreact:latest
+          ports:
+            - containerPort: 80
+          imagePullPolicy: Always
